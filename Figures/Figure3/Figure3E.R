@@ -1,205 +1,84 @@
+
 rm(list=ls())
-options(stringsAsFactors = FALSE)
+options(stringsAsFactors = F)
 
-library(ggplot2)
-library(cowplot)
-library(patchwork)
+library(Matrix)
 library(tidyverse)
-library(ggpubr)
-library(ggsignif)
+library(ggplot2)
+library(patchwork)
+library(cowplot)
 
-# ==== Differential Abundance Results ====
-DifferentialAbundanceResults = readRDS(
-  "DifferentialAbundanceResults.RDS"
+
+
+
+# ==== Liver Data ====
+# meta data
+liver_metadata = readRDS(
+  "COVID19LiverMetadata.RDS"
 )
 
 
-# ==== Plots ====
-tmpDF = reshape2::melt(
-  DifferentialAbundanceResults[,c("Control","COVID","Cluster","Compartment")]
+# Viral UMI Bootstrap test
+viral_bootres = readRDS(
+  "COVID19LiverSARS_Cov2_Enrichment.RDS"
 )
 
-tmpDF$value = 100*tmpDF$value
-tmpDF$Significant = tmpDF$Cluster %in% DifferentialAbundanceResults$Cluster[DifferentialAbundanceResults$GLMM.FDR < 0.05]
-tmpDF$Cluster = factor(tmpDF$Cluster,levels=DifferentialAbundanceResults$Cluster)
-tmpDF$lab = ifelse(tmpDF$Significant,"*","")
-tmpDF$lab[tmpDF$Cluster %in% DifferentialAbundanceResults$Cluster[DifferentialAbundanceResults$GLMM.FDR < 0.01]] = "**"
+ves_cluster = readRDS(
+  "COVID19LiverViralEnrichment.RDS"
+)
 
-ggplot(
-  tmpDF,
-  aes(x=Cluster,y=value,fill=variable)
+
+# ==== COVID+ Bar Plots ====
+cluster_covid_plus_tab = with(
+  viral_bootres,
+  100*tapply(X=SARS.CoV.2.Plus,INDEX=ClusterName,FUN=mean)
+)
+ves_cluster$PCT = cluster_covid_plus_tab[ves_cluster$ClusterName]
+
+ves_cluster$Label = ifelse(ves_cluster$FDR < 0.05,"*","")
+ves_cluster$Label[ves_cluster$FDR < 0.01] = "**"
+pbp_vescluster = ggplot(
+  ves_cluster,
+  aes(
+    x=ClusterName,y=PCT,fill=qnES,
+    label = Label
+  )
 ) +
-  geom_bar(stat="identity", position=position_dodge2(1)) +
-  scale_fill_manual(
-    values = c(
-      "Control" = "#00BFC4",
-      "COVID" = "#F8766D"
-    )
-  ) + 
-  labs(fill="") +
-  ylab("Relative Abundance (%)") +
-  xlab("") +
-  geom_text(
-    data=tmpDF,
-    aes(y=value,x=Cluster,label=lab,group=variable),
-    hjust=0,
-    vjust=0.8,
-    angle=90,
-    position = position_dodge(1),
-    inherit.aes = FALSE,
-    size=6.5
+  geom_bar(stat="identity") +
+  scale_fill_gradient2(
+    low="blue",high="red",mid="grey86",
+    name="Enrichment Score"
   ) +
+  geom_text(
+    hjust=0,
+    vjust=0.85,
+    angle=90,
+    size=7.5
+  ) +
+  xlab("") +
+  ylab("(%) SARS-CoV2 +") +
   theme_cowplot() +
   theme(
     axis.text.x = element_text(
-      angle = 90, 
-      vjust = 0.5, 
-      hjust = 1,
+      angle=90,
+      vjust=0.5,
+      hjust=1,
+      size=15,
       color=ifelse(
-        tmpDF$Significant,
+        ves_cluster$FDR < 0.05,
         "red","black"
       ),
       face = ifelse(
-        tmpDF$Significant,
+        ves_cluster$FDR < 0.05,
         "bold.italic","plain"
       )
     ),
-    legend.position = "top",
-    legend.justification = "center",
-    legend.margin = margin(0,0,0,0),
-    legend.box.margin = margin(0,0,-30,0)
-  ) 
-
-clusttemp = tmpDF %>%
-  filter(variable == "Control",Significant == TRUE) %>%
-  select(Cluster) %>%
-  unlist()
-
-xtemp = tmpDF %>%
-  filter(variable == "Control") %>%
-  select(Significant) %>%
-  unlist() %>%
-  which()
-
-ytemp = apply(
-  cbind(
-    tmpDF %>%
-      filter(variable == "Control",Significant == TRUE) %>%
-      select(value) %>%
-      unlist() ,
-    tmpDF %>%
-      filter(variable == "COVID",Significant == TRUE) %>%
-      select(value) %>%
-      unlist() 
-  ),1,function(x){max(x) + 0.5}
-)
-
-labtemp = tmpDF %>%
-  filter(variable == "Control",Significant == TRUE) %>%
-  select(lab) %>%
-  unlist()
-
-signifdat = data.frame(
-  Cluster = clusttemp,
-  x = xtemp - 0.3,
-  xend = xtemp + 0.3,
-  y = ytemp,
-  annotation = labtemp
-)
-
-tmp_ind = tmpDF %>%
-  filter(variable == "COVID",Significant == TRUE) %>%
-  select(value) %>%
-  unlist() >
-  tmpDF %>%
-  filter(variable == "Control",Significant == TRUE) %>%
-  select(value) %>%
-  unlist() 
-
-
-covid_up = (tmpDF %>%
-              filter(variable == "COVID",Significant == TRUE) %>%
-              select(Cluster) %>%
-              unlist() %>% 
-              as.character()
-)[tmp_ind]
-
-covid_down = (tmpDF %>%
-                filter(variable == "COVID",Significant == TRUE) %>%
-                select(Cluster) %>%
-                unlist() %>% 
-                as.character()
-)[!tmp_ind]
-
-
-# Covid specific clusters
-covid_specific = DifferentialAbundanceResults %>%
-  filter(
-    Control == 0, COVID > 0
-  ) %>%
-  select(Cluster) %>%
-  unlist()
-
-# %>%
-#   select(Cluster) %>%
-#   unlist() %>% 
-#   as.character()
-
-
-tmpDF$xlabColor = "black"
-tmpDF$xlabColor[tmpDF$Cluster %in% covid_up] = "#F8766D"
-tmpDF$xlabColor[tmpDF$Cluster %in% covid_down] = "#00BFC4"
-tmpDF$xlabColor[tmpDF$Cluster %in% covid_specific] = "red4"
-
-
-pbar_base = ggplot(
-  tmpDF,
-  aes(x=Cluster,y=value,fill=variable)
-) +
-  geom_bar(stat="identity", position=position_dodge2(1)) +
-  scale_fill_manual(
-    values = c(
-      "Control" = "#00BFC4",
-      "COVID" = "#F8766D"
-    )
-  ) + 
-  labs(fill="") +
-  ylab("Relative Abundance (%)") +
-  xlab("") +
-  theme_cowplot() +
-  theme(
-    axis.text.x = element_text(
-      angle = 90,
-      vjust = 0.5,
-      hjust = 1,
-      color=tmpDF$xlabColor,
-      face = ifelse(
-        tmpDF$Significant,
-        "bold.italic","plain"
-      )
-    ),
-    legend.position = "top",
-    legend.justification = "center",
-    legend.margin = margin(0,0,0,0),
-    legend.box.margin = margin(0,0,-30,0)
+    legend.position = c(0.77,0.85),
+    legend.margin = margin(10,10,10,10),
+    legend.background = element_rect(color = "black")
   )
 
 
-for(ic in 1:nrow(signifdat)){
-  pbar_base = pbar_base +
-    geom_signif(
-      stat = "identity",
-      data = signifdat[ic,,drop=F],
-      aes(
-        x = x,
-        xend = xend,
-        y = y,
-        yend = y,
-        annotation = annotation
-      ),
-      inherit.aes = FALSE
-    ) 
-}
+pbp_vescluster
 
-pbar_base 
 

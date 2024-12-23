@@ -1,0 +1,3 @@
+Hepatocytes	Hepatocytes	Hepatocytes	Hepatocytes	Hepatocytes	Hepatocytes	Hepatocytes	Immune	Immune	Immune	Immune	Endothelial	Endothelial	Endothelial	Endothelial	Endothelial	Endothelial	Endothelial	Endothelial	Endothelial	Mesenchymal	Mesenchymal	Mesenchymal	BECs	BECs	BECs	BECs
+HNF4A	ALB	ABCC2	APOA1	APOB	CP	TF	PTPRC	MARCO	CD163	THEMIS	FCGR2B	VWF	CDH5	CD36	KDR	ERG	EGFL7	FLT4	FLT1	PDGFRB	ACTA2	DCN	CFTR	KRT7	KRT19	ANXA4
+HNF4A	ALB	ABCC2	APOA1	APOB	CP	TF	CD45	MARCO	CD163	THEMIS	CD32B	VWF	CDH5	CD36	KDR	ERG	EGFL7	FLT4	VEGFR1	PDGFRB	ACTA2	DCN	CFTR	KRT7	KRT19	ANXA4

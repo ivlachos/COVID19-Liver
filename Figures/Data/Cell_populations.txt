@@ -1,0 +1,51 @@
+Cluster	Label	Alias	Major Cell Type
+0_0	HEP1	Interzonal Hepatocytes	Hepatocytes
+0_1	HEP2	Mature Hepatocytes	Hepatocytes
+0_2	HEP3	Hepatocytes - High Growth Factor	Hepatocytes
+0_3	HEP4	Stressed Hepatocytes	Hepatocytes
+0_4	HEP5	Hepatocytes - CD45	Hepatocytes
+0_5	HEP6	Hepatocytes - MT high	Hepatocytes
+0_6	HEP7	Acute response Hepatocytes	Hepatocytes
+1_0	MAC1	Kupffer Cells	Immune
+1_1	MAC2	Intermediate Macrophages	Immune
+1_2_0	TC1	T Cell CD8 Naive	Immune
+1_2_1	TC2	T Cell CD8 Cytotoxic	Immune
+1_2_2	TC3	T Cell Effector Memory	Immune
+1_2_3	TC4	T Cell Naive	Immune
+1_3	DBL1	Cell doublets	Immune
+1_4	MAC3	Proinflammatory Macrophages	Immune
+1_5	NK	NK Cells	Immune
+1_6_0	PC1	Plasma Cells 1	Immune
+1_6_1	PC2	Plasma Cells 2	Immune
+1_6_2	BC	Mature B Cells	Immune
+1_7_0	ERY-P	RET	Immune
+1_7_1	MAC4	replacting KC	Immune
+1_8_0	MAST	Unknown	Immune
+1_8_1	DBL2	Dbl2	Immune
+2_0	EC1	LSECs - Profibrotic	Endothelial
+2_1	EC2	LSECs - Classical	Endothelial
+2_2	EC3	LSECs - Profibrotic	Endothelial
+2_3	EC4	LSECs - Portal	Endothelial
+2_4	EC5	LSECs - PLVAP Fibrotic Niche	Endothelial
+2_5	EC6	Central Venous Endothelial Cells	Endothelial
+2_6	EC7	Endothelial Cells - EMT	Endothelial
+2_7	EC8	Central Venous Endothelial Cells	Endothelial
+2_8	EC9	Endothelial Cells - Proinflammatory	Endothelial
+2_9	DBL3	Cell doublets	Endothelial
+2_10	EC11	Lymphatic Endothelium	Endothelial
+2_11	EC12	Replicating Endothelial Cells	Endothelial
+3_0	MES1	Hepatic Stellate Cells	Stellate
+3_1	MES2	Activated Stellate Cells	Stellate
+3_2	MES3	Fibroblasts - ECM-associated	Stellate
+3_3	MES4	Smooth Muscle Cells	Stellate
+3_4	MES5	Inactive Mesenchymal Cells	Stellate
+3_5	DBL4	Cell doublets	Stellate
+3_6	MES7	Stellate Cells - High MT	Stellate
+3_7	MES8	Activated myofibroblasts	Stellate
+4_0	BEC1	Small Mature Cholangiocytes	BECs
+4_1	BEC2	Small Mature Cholangiocytes	BECs
+4_2	BEC3	Hepatocyte Progenitors	BECs
+4_3	BEC4	Reactve Ducts	BECs
+4_4	BEC5	Immature cholangiocytes	BECs
+4_5	BEC6	Intermediate Cholangiocytes	BECs
+4_6	BEC7	Profibrogenic Cholangiocytes	BECs

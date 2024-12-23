@@ -1,0 +1,1 @@
+A binomial generalized linear mixed model (GLMM) was utilized to study the differences in cell type abundances between COVID-19 and control livers. Lme4 version 1.1-27.1 was utilized to fit the model ~ Cluster*Condition + (1|Sample), and emmeans version 1.6.2-1 to compare the odds ratios of COVID-19 vs Control for each cluster (Supplementary Table S5).
